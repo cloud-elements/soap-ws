@@ -41,6 +41,7 @@ public class SoapContext {
     private final boolean exampleContent;
     private final boolean buildOptional;
     private final boolean alwaysBuildHeaders;
+    private boolean buildMetaInfo = false;
 
     /*
      * A list of XML-Schema types and global elements in the form of name@namespace which
@@ -115,6 +116,14 @@ public class SoapContext {
         return valueComments;
     }
 
+    public boolean isBuildMetaInfo() {
+        return buildMetaInfo;
+    }
+
+    public void setBuildMetaInfo(boolean buildMetaInfo) {
+        this.buildMetaInfo = buildMetaInfo;
+    }
+
     public Set<QName> getExcludedTypes() {
         return new HashSet<QName>(excludedTypes);
     }
@@ -133,6 +142,7 @@ public class SoapContext {
         private boolean valueComments = false;
         private boolean buildOptional = true;
         private boolean alwaysBuildHeaders = true;
+        private boolean buildMetaInfo = false;
         private Set<QName> excludedTypes = new HashSet<QName>();
         private SoapMultiValuesProvider multiValuesProvider = null;
 
@@ -220,5 +230,4 @@ public class SoapContext {
                     buildOptional, alwaysBuildHeaders, excludedTypes, multiValuesProvider);
         }
     }
-
 }

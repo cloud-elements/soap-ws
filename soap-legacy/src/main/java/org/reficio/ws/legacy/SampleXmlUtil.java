@@ -65,6 +65,7 @@ class SampleXmlUtil {
     private boolean typeComment = false;
 
     private boolean skipComments = false;
+    private boolean buildMetaInfo = false;
     private boolean ignoreOptional = false;
 
     /*
@@ -86,6 +87,7 @@ class SampleXmlUtil {
         this.skipComments = !context.isValueComments();
         this.ignoreOptional = !context.isBuildOptional();
         this.multiValuesProvider = context.getMultiValuesProvider();
+        this.buildMetaInfo = context.isBuildMetaInfo();
     }
 
     public boolean isSoapEnc() {
@@ -1169,15 +1171,18 @@ class SampleXmlUtil {
         xmlc.toPrevToken();
         // -> <elem>stuff^</elem>
 
-        //If maxoccurs is null, add the array=true so can be used for creating the models and also converting the
-        // JSON data to SOAP xml
-        if (element.getMaxOccurs() == null) {
-            xmlc.insertAttributeWithValue("array", "true");
-        }
+        if(buildMetaInfo) {
+            //If maxoccurs is null, add the array=true so can be used for creating the models and also converting the
+            // JSON data to SOAP xml
+            if (element.getMaxOccurs() == null) {
+                xmlc.insertAttributeWithValue("array", "true");
+            }
 
-        //identifying the required fields if any, ignoring the required if its an array
-        if (element.getMaxOccurs() != null && ((SchemaParticle) element).getIntMinOccurs() == 1) {
-            xmlc.insertAttributeWithValue("required", "true");
+            //identifying the required fields if any, ignoring the required if its an array
+            if (element.getMaxOccurs() != null && ((SchemaParticle) element).getIntMinOccurs() == 1
+                    && !isSkipMainTags(element.getName().getLocalPart())) {
+                xmlc.insertAttributeWithValue("required", "true");
+            }
         }
 
         String[] values = null;
@@ -1191,6 +1196,14 @@ class SampleXmlUtil {
         }
         // -> <elem>stuff</elem>^
         xmlc.toNextToken();
+    }
+
+    private boolean isSkipMainTags(String partName) {
+        if (StringUtils.equals(partName, "Body") ||
+                StringUtils.equals(partName, "Envelope")) {
+            return true;
+        }
+        return false;
     }
 
     @SuppressWarnings("unused")

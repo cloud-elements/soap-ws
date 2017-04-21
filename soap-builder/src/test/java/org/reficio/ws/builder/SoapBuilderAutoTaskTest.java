@@ -38,6 +38,7 @@ public class SoapBuilderAutoTaskTest {
         String url = "https://webservices2.autotask.net/atservices/1.5/atws.wsdl";
         Wsdl wsdl = Wsdl.parse(url);
         autoTaskSoapBuilder = wsdl.binding().name("{http://autotask.net/ATWS/v1_5/}ATWSSoap").find();
+        autoTaskSoapBuilder.getContext().setBuildMetaInfo(true);
     }
 
     @Test
@@ -126,7 +127,7 @@ public class SoapBuilderAutoTaskTest {
         assertTrue(StringUtils.contains(inputMessage, "xsi:type=\"v1:Contact\""));
     }
 
-//
+
 //    @Test
 //    public void testNetsuite() throws WSDLException {
 //        String netsuiteUrl = "https://webservices.netsuite.com/wsdl/v2016_1_0/netsuite.wsdl";
@@ -159,8 +160,21 @@ public class SoapBuilderAutoTaskTest {
 //                            isInputAbstract = true;
 //                        }
 //
-//                        String inputMessage = builder.buildInputMessage(op);
-//                        System.out.println(inputMessage);
+//                        if(isInputAbstract) {
+//                            SchemaType abstractType = builder.getAbstractSchemaTypeFromOperation(op);
+//                            List<SchemaType> children = builder.getChildrenForType(abstractType);
+//
+//                            SchemaType contactSchemaType = null;
+//                            for (SchemaType childSchemaType : children) {
+//                                if (StringUtils.equals("Contact", childSchemaType.getName().getLocalPart())) {
+//                                    contactSchemaType = childSchemaType;
+//                                }
+//                            }
+//
+//                            String inputMessage = builder.buildInputMessage(op, abstractType, contactSchemaType);
+//                            System.out.println(inputMessage);
+//                        }
+//
 //                    }
 //                }
 //            }
