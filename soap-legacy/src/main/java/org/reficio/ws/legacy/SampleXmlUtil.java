@@ -1169,6 +1169,17 @@ class SampleXmlUtil {
         xmlc.toPrevToken();
         // -> <elem>stuff^</elem>
 
+        //If maxoccurs is null, add the array=true so can be used for creating the models and also converting the
+        // JSON data to SOAP xml
+        if (element.getMaxOccurs() == null) {
+            xmlc.insertAttributeWithValue("array", "true");
+        }
+
+        //identifying the required fields if any, ignoring the required if its an array
+        if (element.getMaxOccurs() != null && ((SchemaParticle) element).getIntMinOccurs() == 1) {
+            xmlc.insertAttributeWithValue("required", "true");
+        }
+
         String[] values = null;
         if (multiValuesProvider != null) {
             values = multiValuesProvider.getMultiValues(element.getName()).toArray(new String[]{});
@@ -1365,6 +1376,11 @@ class SampleXmlUtil {
                 xmlc.insertComment("type: " + type.getName().getLocalPart() + info);
             }
         }
+
+//        //If maxoccurs is null
+//        if(element.getMaxOccurs() == null) {
+//            xmlc.insertAttributeWithValue("array", "true");
+//        }
     }
 
     public void setTypeComment(boolean b) {
